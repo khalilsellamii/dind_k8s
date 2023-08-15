@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-dind-and-golang-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-dind-and-golang-app
+  template:
+    metadata:
+      labels:
+        app: my-dind-and-golang-app
+    spec:
+      containers:
+        - name: dind-daemon
+          image: docker:dind
+          securityContext:
+            privileged: true
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: "/certs"
+          volumeMounts:
+            - name: ca-certs-volume
+              mountPath: "/certs/ca"
+            - name: client-certs-volume
+              mountPath: "/certs/client"
+        - name: golang-application
+          image: khalil1234/mtls-golang-sdk:latest
+          env:
+            - name: DOCKER_HOST
+              value: tcp://localhost:2376
+          volumeMounts:
+            - name: ca-certs-volume
+              mountPath: "/certs/ca"
+            - name: client-certs-volume
+              mountPath: "/certs/client"
+      volumes:
+        - name: ca-certs-volume
+          emptyDir: {}
+        - name: client-certs-volume
+          emptyDir: {}  

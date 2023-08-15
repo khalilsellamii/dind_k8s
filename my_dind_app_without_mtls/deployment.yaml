@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapplication
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapplication
+  template:
+    metadata:
+      labels:
+        app: myapplication
+    spec:
+      containers:
+        - name: dind-daemon
+          image: docker:dind
+          securityContext:
+            privileged: true
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: ""
+        - name: golang-application
+          image: khalil1234/golang-sdk:v1
+          env:
+            - name: DOCKER_HOST
+              value: tcp://localhost:2375 
