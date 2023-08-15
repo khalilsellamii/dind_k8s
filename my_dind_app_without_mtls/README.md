@@ -1,4 +1,4 @@
-# Dockerin DOcker in kubernetes without mTLS
+# Docker in Docker in kubernetes without mTLS
 
 ## Architecture
 
